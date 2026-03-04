@@ -1,0 +1,77 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on: [zookeeper]
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  user-service:
+    image: ${DOCKER_USERNAME}/tradebook-user:${TAG:-latest}
+    depends_on: [postgres]
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/orderbook_users
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8081:8081"
+
+  order-service:
+    image: ${DOCKER_USERNAME}/tradebook-order:${TAG:-latest}
+    depends_on: [postgres, kafka]
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/orderbook
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8082:8082"
+
+  trade-service:
+    image: ${DOCKER_USERNAME}/tradebook-trade:${TAG:-latest}
+    depends_on: [postgres, kafka]
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/orderbook_trades
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8083:8083"
+
+  exchange-service:
+    image: ${DOCKER_USERNAME}/tradebook-exchange:${TAG:-latest}
+    depends_on: [postgres]
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/orderbook_exchange
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8084:8084"
+
+  frontend:
+    image: ${DOCKER_USERNAME}/tradebook-frontend:${TAG:-latest}
+    depends_on: [user-service, order-service, trade-service, exchange-service]
+    ports:
+      - "80:80"
+
+volumes:
+  postgres_data:
