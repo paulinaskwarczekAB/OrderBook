@@ -19,7 +19,7 @@ pipeline {
                     steps {
                         script {
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                def img = docker.build("${DOCKER_USERNAME}/tradebook-user:${TAG}", "-f UserService/Dockerfile .")
+                                def img = docker.build("${DOCKER_USERNAME}/tradebook-user:${TAG}", "-f UserService/Users/Dockerfile .")
                                 img.push()
                                 img.push('latest')
                             }
@@ -41,7 +41,7 @@ pipeline {
                     steps {
                         script {
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                def img = docker.build("${DOCKER_USERNAME}/tradebook-trade:${TAG}", "-f TradeService/Dockerfile .")
+                                def img = docker.build("${DOCKER_USERNAME}/tradebook-trade:${TAG}", "-f TradeService/Trade/Dockerfile .")
                                 img.push()
                                 img.push('latest')
                             }
@@ -52,7 +52,7 @@ pipeline {
                     steps {
                         script {
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                def img = docker.build("${DOCKER_USERNAME}/tradebook-exchange:${TAG}", "-f ExchangeService/Dockerfile .")
+                                def img = docker.build("${DOCKER_USERNAME}/tradebook-exchange:${TAG}", "-f ExchangeService/Exchange/Dockerfile .")
                                 img.push()
                                 img.push('latest')
                             }
@@ -63,7 +63,7 @@ pipeline {
                     steps {
                         script {
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                def img = docker.build("${DOCKER_USERNAME}/tradebook-frontend:${TAG}", "-f frontend/Dockerfile ./frontend")
+                                def img = docker.build("${DOCKER_USERNAME}/tradebook-frontend:${TAG}", "-f frontend/frontend/Dockerfile ./frontend/frontend")
                                 img.push()
                                 img.push('latest')
                             }
