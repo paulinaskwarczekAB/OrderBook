@@ -1,67 +1,50 @@
 import axios from 'axios';
 
-const BASE = process.env.REACT_APP_API_BASE || 'http://localhost';
-const ORDER_API    = `${BASE}:8082`;
-const TRADE_API    = `${BASE}:8083`;
-const EXCHANGE_API = `${BASE}:8084`;
-const USER_API     = `${BASE}:8081`;
-
 export const getToken    = ()      => localStorage.getItem('jwt_token');
 export const setToken    = (token) => localStorage.setItem('jwt_token', token);
 export const removeToken = ()      => localStorage.removeItem('jwt_token');
 
-const orderAxios    = axios.create({ baseURL: ORDER_API });
-const tradeAxios    = axios.create({ baseURL: TRADE_API });
-const exchangeAxios = axios.create({ baseURL: EXCHANGE_API });
-const userAxios     = axios.create({ baseURL: USER_API });
+const api = axios.create({ baseURL: '' });
 
-[orderAxios, tradeAxios, exchangeAxios].forEach(instance => {
-  instance.interceptors.request.use(config => {
-    const token = getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
+api.interceptors.request.use(config => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
+export const userApi = {
+  register: (data) => api.post('/api/auth/register', data),
+  login:    (data) => api.post('/api/auth/login', data),
+  getById:  (id)   => api.get(`/api/users/${id}`),
+  getAll:   ()     => api.get('/api/users'),
+};
+
 export const orderApi = {
-  getAll: () => orderAxios.get('/orders'),
-
-  getById: (id) => orderAxios.get(`/orders/${id}`),
-
-  getByTrader: (traderId) => orderAxios.get(`/orders/trader/${traderId}`),
-
-  create: (data) => orderAxios.post('/orders', data),
-
-  update: (id, data) => orderAxios.put(`/orders/${id}/update`, data),
-
-  cancel: (id) => orderAxios.put(`/orders/${id}/cancel`),
+  getAll:      ()        => api.get('/api/orders'),
+  getById:     (id)      => api.get(`/api/orders/${id}`),
+  getByTrader: (tid)     => api.get(`/api/orders/trader/${tid}`),
+  create:      (data)    => api.post('/api/orders', data),
+  update:      (id, d)   => api.put(`/api/orders/${id}/update`, d),
+  cancel:      (id)      => api.put(`/api/orders/${id}/cancel`),
 };
 
 export const tradeApi = {
-  getAll: () => tradeAxios.get('/trades'),
-  getByInstrument: (instrument) => tradeAxios.get(`/trades/instrument/${instrument}`),
-  getByTrader: (traderId) => tradeAxios.get(`/trades/trader/${traderId}`),
-  getById: (id) => tradeAxios.get(`/trades/${id}`),
+  getAll:          ()    => api.get('/api/trades'),
+  getByInstrument: (i)   => api.get(`/api/trades/instrument/${i}`),
+  getByTrader:     (tid) => api.get(`/api/trades/trader/${tid}`),
+  getById:         (id)  => api.get(`/api/trades/${id}`),
 };
 
 export const exchangeApi = {
-  getAll: () => exchangeAxios.get('/'),
-  getById: (id) => exchangeAxios.get(`/${id}`),
-  getByRegion: (region) => exchangeAxios.get(`/region/${region}`),
-  create: (data) => exchangeAxios.post('/', data),
-  update: (id, data) => exchangeAxios.put(`/${id}`, data),
-
+  getAll:      ()         => api.get('/api/exchanges/'),
+  getById:     (id)       => api.get(`/api/exchanges/${id}`),
+  getByRegion: (region)   => api.get(`/api/exchanges/region/${region}`),
+  create:      (data)     => api.post('/api/exchanges/', data),
+  update:      (id, data) => api.put(`/api/exchanges/${id}`, data),
   executeTrade: (region, instrument, price, quantity) =>
-    exchangeAxios.post(`/execute/${region}`, null, {
+    api.post(`/api/exchanges/execute/${region}`, null, {
       params: { instrument, price, quantity }
     }),
-};
-
-export const userApi = {
-  register: (data) => userAxios.post('/auth/register', data),
-  login:    (data) => userAxios.post('/auth/login', data),
-  getById:  (id)   => userAxios.get(`/users/${id}`),
-  getAll:   ()     => userAxios.get('/users'),
 };
