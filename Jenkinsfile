@@ -78,8 +78,8 @@ pipeline {
                 sh """
                     export DOCKER_USERNAME=${DOCKER_USERNAME}
                     export TAG=${TAG}
-                    docker compose pull
-                    docker compose up -d
+                    docker-compose pull
+                    docker-compose up -d
                 """
             }
         }
