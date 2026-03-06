@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> getOrdersByOrderSide(OrderSide side);
+
     List<Order> getOrdersByInstrument(String instrument);
     List<Order> getOrdersByRegion(String region);
     List<Order> getOrdersByTraderId(Long traderId);
