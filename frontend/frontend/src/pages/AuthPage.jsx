@@ -27,7 +27,7 @@ export default function AuthPage() {
         await register(form);
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Błąd połączenia z serwerem');
+      setError(err.response?.data?.message || err.message || 'nO INTERNET CONNECTION');
     } finally {
       setLoading(false);
     }
