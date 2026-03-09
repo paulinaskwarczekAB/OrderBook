@@ -38,10 +38,10 @@ export const tradeApi = {
 };
 
 export const exchangeApi = {
-  getAll:      ()         => api.get('/api/exchanges/'),
+  getAll:      ()         => api.get('/api/exchanges'),
   getById:     (id)       => api.get(`/api/exchanges/${id}`),
   getByRegion: (region)   => api.get(`/api/exchanges/region/${region}`),
-  create:      (data)     => api.post('/api/exchanges/', data),
+  create:      (data)     => api.post('/api/exchanges', data),
   update:      (id, data) => api.put(`/api/exchanges/${id}`, data),
   executeTrade: (region, instrument, price, quantity) =>
     api.post(`/api/exchanges/execute/${region}`, null, {
