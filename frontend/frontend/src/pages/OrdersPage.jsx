@@ -85,11 +85,6 @@ function NewOrderModal({ onClose, onSuccess }) {
               <option>US</option><option>EU</option><option>ASIA</option>
             </select>
           </div>
-          <div className="form-group">
-            <label className="form-label">Trader ID</label>
-            <input className="form-input" name="traderId" value={form.traderId}
-              type="number" readOnly style={{ opacity: 0.5, cursor: 'not-allowed' }} />
-          </div>
         </div>
 
         <div className="modal-actions">
