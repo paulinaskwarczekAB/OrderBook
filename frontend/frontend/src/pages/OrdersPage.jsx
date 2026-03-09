@@ -103,6 +103,7 @@ function NewOrderModal({ onClose, onSuccess }) {
 }
 
 export default function OrdersPage() {
+  const { user } = useAuth();
   const [orders, setOrders]           = useState([]);
   const [loading, setLoading]         = useState(true);
   const [showModal, setShowModal]     = useState(false);
@@ -110,16 +111,16 @@ export default function OrdersPage() {
   const [filterSide, setFilterSide]   = useState('ALL');
 
   const load = async () => {
-    setLoading(true);
-    try {
-      const res = await orderApi.getAll();
-      setOrders(res.data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+      setLoading(true);
+      try {
+        const res = await orderApi.getByTrader(user.id);
+        setOrders(res.data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   useEffect(() => { load(); }, []);
 
