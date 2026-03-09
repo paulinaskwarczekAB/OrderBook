@@ -87,7 +87,8 @@ function NewOrderModal({ onClose, onSuccess }) {
           </div>
           <div className="form-group">
             <label className="form-label">Trader ID</label>
-            <input className="form-input" name="traderId" value={form.traderId} onChange={handle} type="number" />
+            <input className="form-input" name="traderId" value={form.traderId}
+              type="number" readOnly style={{ opacity: 0.5, cursor: 'not-allowed' }} />
           </div>
         </div>
 
@@ -111,16 +112,16 @@ export default function OrdersPage() {
   const [filterSide, setFilterSide]   = useState('ALL');
 
   const load = async () => {
-      setLoading(true);
-      try {
-        const res = await orderApi.getByTrader(user.id);
-        setOrders(res.data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    try {
+      const res = await orderApi.getByTrader(user.id);
+      setOrders(res.data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => { load(); }, []);
 
