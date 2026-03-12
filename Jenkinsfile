@@ -19,7 +19,7 @@ pipeline {
                     steps {
                         script {
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                def img = docker.build("${DOCKER_USERNAME}/tradebook-user:${TAG}", "-f UserService/Users/Dockerfile .")
+                                def img = docker.build("${DOCKER_USERNAME_USR}/tradebook-user:${TAG}", "-f UserService/Users/Dockerfile .")
                                 img.push()
                                 img.push('latest')
                             }
@@ -30,7 +30,7 @@ pipeline {
                     steps {
                         script {
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                def img = docker.build("${DOCKER_USERNAME}/tradebook-order:${TAG}", "-f OrderService/Dockerfile .")
+                                def img = docker.build("${DOCKER_USERNAME_USR}/tradebook-order:${TAG}", "-f OrderService/Dockerfile .")
                                 img.push()
                                 img.push('latest')
                             }
@@ -41,7 +41,7 @@ pipeline {
                     steps {
                         script {
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                def img = docker.build("${DOCKER_USERNAME}/tradebook-trade:${TAG}", "-f TradeService/Trade/Dockerfile .")
+                                def img = docker.build("${DOCKER_USERNAME_USR}/tradebook-trade:${TAG}", "-f TradeService/Trade/Dockerfile .")
                                 img.push()
                                 img.push('latest')
                             }
@@ -52,7 +52,7 @@ pipeline {
                     steps {
                         script {
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                def img = docker.build("${DOCKER_USERNAME}/tradebook-exchange:${TAG}", "-f ExchangeService/Exchange/Dockerfile .")
+                                def img = docker.build("${DOCKER_USERNAME_USR}/tradebook-exchange:${TAG}", "-f ExchangeService/Exchange/Dockerfile .")
                                 img.push()
                                 img.push('latest')
                             }
@@ -63,7 +63,7 @@ pipeline {
                     steps {
                         script {
                             docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                def img = docker.build("${DOCKER_USERNAME}/tradebook-frontend:${TAG}", "-f frontend/frontend/Dockerfile ./frontend/frontend")
+                                def img = docker.build("${DOCKER_USERNAME_USR}/tradebook-frontend:${TAG}", "-f frontend/frontend/Dockerfile ./frontend/frontend")
                                 img.push()
                                 img.push('latest')
                             }
@@ -76,7 +76,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh """
-                    export DOCKER_USERNAME=${DOCKER_USERNAME}
+                    export DOCKER_USERNAME=${DOCKER_USERNAME_USR}
                     export TAG=${TAG}
                     docker-compose pull
                     docker-compose up -d
